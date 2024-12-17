@@ -1,19 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Button } from './components/ui/button'
-import Login from './pages/Login'
+import { Routes, Route } from 'react-router-dom';
+import Signup from './pages/Signup';
+import LoginPage from './pages/Login';
+import Navbar from './components/Navbar';
+import toast, { Toaster } from 'react-hot-toast';
+import HomePage from './pages/HomePage';
+import MyLearning from './components/student/MyLearning';
+import Profile from './components/student/Profile';
+import { useEffect } from 'react';
+import axiosInstance from './lib/axios';
+import useAuthstore from './zustand/useAuthStore';
+import { useDispatch } from 'react-redux';
+import { userLoggedIn } from './store/slice/authSlice';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  
+  const {setUser} = useAuthstore();
+  const dispatch = useDispatch();
 
+  useEffect(()=>{
+    async function fetchData(){
+      try {
+        console.log("first")
+        const res = await axiosInstance.get("/api/auth/user");
+        setUser(res.data.user);
+        dispatch(userLoggedIn(res.data.user));
+        console.log("second")
+        console.log(res)
+        if(!res.data.success){
+          toast.error(res.data.message)
+        }
+      } catch (error) {
+        console.log(error);
+        // toast.error(error.response.data.message || error.message)
+      }
+    }
+    fetchData();
+  },[])
   return (
-    <main>
-      <Login/>
-    <Button></Button>
-    </main>
+    <div>
+    <Navbar/>
+    <Routes>
+      <Route path='/' element={<HomePage/>}/>
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/my-learning" element={<MyLearning />} />
+      <Route path="/profile" element={<Profile />} />
+    </Routes>
+    <Toaster/>
+  </div>
   )
-}
+};
 
-export default App
+export default App;

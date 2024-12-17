@@ -1,35 +1,61 @@
-import useAuthstore from "../zustand/useAuthStore";
+import axiosInstance from "../lib/axios";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import useAuthstore from "../zustand/useAuthStore";
 import { Loader2 } from "lucide-react";
 
-const LoginPage = () => {
-  const {login,isLogin} = useAuthstore();
-  const [loading, setLoading] = useState(false)
+const Signup = () => {
   const navigate = useNavigate();
+  const {isSignUp,Signup} = useAuthstore();
   const {
     register,
     reset,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
   const onSubmit = async (data) => {
-    setLoading(true);
-    await login(data);
-    setLoading(false)
-    navigate("/")
+    Signup(data);
     reset();
+    navigate("/login")
   };
+
+  const password = watch("password");
 
   return (
     <div className="flex justify-center items-center h-screen" >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex px-4 w-xl flex-col gap-5">
-        <h1 className="font-bold text-4xl text-center">Sign In</h1>
-       
+      <form onSubmit={handleSubmit(onSubmit)} className="flex px-4 w-96 flex-col text-wrap gap-5">
+        <h1 className="font-bold text-4xl text-center">Sign Up</h1>
+        <div className="flex flex-col gap-1  ">
+          <label htmlFor="name" className="font-semibold">
+            Name:
+          </label>
+          <Input
+            className="p-2 rounded-md focus:ring-2 focus:ring-cyan-700 outline-none"
+            type="text"
+            placeholder="Enter your name..."
+            id="name"
+            {...register("name", {
+              required: "Name is required",
+              pattern: {
+                value: /^[A-Za-z\s]+$/i,
+                message: "Name must only contain letters and spaces",
+              },
+              minLength: {
+                value: 8,
+                message: "Name must be at least 8 characters",
+              },
+            })}
+          />
+          {
+            errors.name && (
+              <p className="text-red-500 text-wrap text-sm">{errors.name.message}</p>
+            )
+          }
+        </div>
         <div className="flex flex-col gap-1">
           <label htmlFor="email" className="font-semibold">
             Email:
@@ -82,19 +108,40 @@ const LoginPage = () => {
             )
           }
         </div>
-       
+        <div className="flex flex-col gap-1">
+          <label htmlFor="name" className="font-semibold">
+            Confirm password:
+          </label>
+          <Input
+            className="p-2  rounded-md focus:ring-2 focus:ring-cyan-700 outline-none"
+            type="text"
+            placeholder="Enter your name..."
+            id="confirmPassword"
+            {
+              ...register("confirmPassword", {
+                required: "Confirm password is required",
+                validate: (value) => value === password || "Passwords do not match",
+              })
+            }
+          />
+          {
+            errors.confirmPassword && (
+              <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+            )
+          }
+        </div>
         <div>
         <span>
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-cyan-700">
-            Sign Up
+          Already have an account?{" "}
+          <Link to="/login" className="text-cyan-700">
+            Login
           </Link>
         </span>
         </div>
-        <Button type="submit" >{isLogin ? <Loader2 className="animate-spin"/> : "Submit"}</Button>
+        <Button type="submit" >{isSignUp ? <Loader2 className="animate-spin"/> : "Submit"}</Button>
       </form>
     </div>
   );
 };
 
-export default LoginPage;
+export default Signup;
