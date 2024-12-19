@@ -21,9 +21,23 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import useAuthstore from "@/zustand/useAuthStore";
+import { use, useEffect } from "react";
 
 const Navbar = () => {
-  const {user} = useAuthstore();
+  const navigate = useNavigate();
+  const {user,logout} = useAuthstore();
+  const handleLogout = () => {  
+    const logOut = logout();
+    if(logOut){
+      navigate("/login")
+    }else{
+      navigate("/");
+    }
+  }
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
   return (
     <div className="h-16 dark:bg-[#0A0A0A] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0 z-50 duration-300">
       {/* Desktop */}
@@ -39,7 +53,7 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Avatar>
                     <AvatarImage
-                      src="https://github.com/shadcn.png"
+                      src={user.profileImage  }
                       alt="@shadcn"
                     />
                     <AvatarFallback>CN</AvatarFallback>
@@ -52,8 +66,8 @@ const Navbar = () => {
                     <Link to={"/my-learning"} className="w-full">My Learning</Link>
                     </DropdownMenuItem>
                   <DropdownMenuItem><Link to={"/profile"} className="w-full">Edit Profile</Link></DropdownMenuItem>
-                  <DropdownMenuItem className="w-full flex justify-between items-center">
-                    <span>Log out</span>
+                  <DropdownMenuItem className="w-full flex justify-between items-center" onClick={handleLogout}>
+                    <span >Log out</span>
                     <LogOut className="text-gray-700" />
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -119,7 +133,9 @@ function SheetDemo() {
             </SheetClose>
           </li>
           <li>
-            <Link>LogOut </Link>
+          <SheetClose asChild>
+            <Link to={"/logout"}>Log out</Link>
+            </SheetClose>
           </li>
         </ul>
         {role === "instructor" ? (

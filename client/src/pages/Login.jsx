@@ -19,7 +19,7 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    await login(data);
+    await login(data,navigate);
     setLoading(false)
     navigate("/")
     reset();

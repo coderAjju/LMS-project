@@ -5,29 +5,12 @@ import { Loader2 } from "lucide-react";
 
 const Profile = () => {
   const [profileFile, setProfileFile] = useState(null)
-  const [files, setFiles] = useState("")
+  const [files, setFiles] = useState(null)
   // Mock user data
-  const {user,setUser,updateUser} = useAuthstore();
+  const {user,updateUser} = useAuthstore();
   const [userName, setUserName] = useState(user.name)
   const [loading, setLoading] = useState(false)
-
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: "React for Beginners",
-      image: "https://via.placeholder.com/150/3b82f6/ffffff?text=React",
-    },
-    {
-      id: 2,
-      title: "Advanced JavaScript",
-      image: "https://via.placeholder.com/150/10b981/ffffff?text=JavaScript",
-    },
-    {
-      id: 3,
-      title: "UI/UX Design Principles",
-      image: "https://via.placeholder.com/150/f43f5e/ffffff?text=UI/UX",
-    },
-  ]);
+  const [courses, setCourses] = useState([]);
 
   const [editMode, setEditMode] = useState(false);
 
@@ -36,19 +19,19 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-       setLoading(true)
-    await updateUser(userName,files)
-    console.log('hello');
-    setLoading(false)
+       setLoading(true);
+    await updateUser(userName,files);
+    setLoading(false);
     setEditMode(false);
   };
 
   const handleFile = (e) => {
-    setFiles(e.target.files[0]);
-    if (files) {
-      setProfileFile(URL.createObjectURL(files));
+    const file = e.target.files[0];
+    setFiles(file);
+    if (file) {
+      setProfileFile(URL.createObjectURL(file));
     }
-    console.log(profileFile)
+    user.profileImage = profileFile;
   };
 
   return (
@@ -135,7 +118,7 @@ const Profile = () => {
           }`}
         >
           {user.enrolledCourses
-.length === 0 ? <p>You are not enrolled in any course</p> : courses.map((course, _) => (
+.length === 0 ? <p>You are not enrolled in any course</p> : courses.map((course) => (
             <Course course={course} key={course.id} />
           ))}
         </div>

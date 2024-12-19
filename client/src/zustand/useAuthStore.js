@@ -6,7 +6,13 @@ const useAuthstore = create((set, get) => ({
   user: localStorage.getItem("authUser")
     ? JSON.parse(localStorage.getItem("authUser"))
     : null,
-  setUser: (user) => set({ user }),
+  setUser: (user) => {
+    // Update Zustand state
+    set({ user });
+
+    // Save user info to localStorage
+    localStorage.setItem("authUser", JSON.stringify(user));
+  },
   isSignUp: false,
   isLogin: false,
 
@@ -22,7 +28,7 @@ const useAuthstore = create((set, get) => ({
       set({ isSignUp: false });
     }
   },
-  login: async (user) => {
+  login: async (user, navigate) => {
     set({ isLogin: true });
     try {
       const res = await axiosInstance.post("/api/auth/login", user);
@@ -35,6 +41,7 @@ const useAuthstore = create((set, get) => ({
       toast.success(res.data.message);
     } catch (error) {
       toast.error(error.response.data.message || error.message);
+      navigate("/login");
     } finally {
       set({ isLogin: false });
     }
@@ -46,9 +53,11 @@ const useAuthstore = create((set, get) => ({
       localStorage.setItem("authUserExpireAt", "");
       toast.success(res.data.message);
       set({ user: null });
+      return true;
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message || error.message);
+      return false;
     }
   },
 
@@ -63,7 +72,7 @@ const useAuthstore = create((set, get) => ({
   },
   updateUser: async (name, profileImage) => {
     try {
-      if(name.length === 0){
+      if (name.length === 0) {
         name = get().user.name;
       }
       const res = await axiosInstance.put(
@@ -75,12 +84,8 @@ const useAuthstore = create((set, get) => ({
           },
         }
       );
-      console.log(res.data)
-      get().setUser({
-        ...get().user,
-        name: res.data.user.name,
-        photoUrl: res.data.user.photoUrl,
-      });
+      console.log(res.data.user);
+      get().setUser(res.data.user);
       toast.success(res.data.message);
     } catch (error) {
       console.log(error);
