@@ -15,6 +15,7 @@ import Sidebar from "./pages/admin/Sidebar";
 import Dashboard from "./pages/admin/Dashboard";
 import CourseTable from "./pages/admin/course/CourseTable";
 import AddCourse from "./pages/admin/course/AddCourse";
+import EditCourse from "./pages/admin/course/EditCourse";
 
 const App = () => {
   const { setUser } = useAuthstore();
@@ -23,12 +24,9 @@ const App = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log("first");
         const res = await axiosInstance.get("/api/auth/user");
         setUser(res.data.user);
         dispatch(userLoggedIn(res.data.user));
-        console.log("second");
-        console.log(res);
         if (!res.data.success) {
           toast.error(res.data.message);
         }
@@ -55,6 +53,7 @@ const App = () => {
           <Route path="course" element={<CourseTable />} >
             <Route path="create" element={<AddCourse/>} />
           </Route>
+          <Route path="course/:courseId" element={<EditCourse/>}/>
         </Route>
       </Routes>
       <Toaster />

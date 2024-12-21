@@ -3,9 +3,9 @@ import axiosInstance from "../lib/axios";
 import { create } from "zustand";
 
 const useAuthstore = create((set, get) => ({
-  user: localStorage.getItem("authUser")
-    ? JSON.parse(localStorage.getItem("authUser"))
-    : null,
+    user: localStorage.getItem("authUser") !== undefined
+    ? null
+    : JSON.parse(localStorage.getItem("authUser")),
   setUser: (user) => {
     // Update Zustand state
     set({ user });

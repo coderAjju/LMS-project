@@ -1,3 +1,4 @@
+import { profile } from "console";
 import {
   deleteMediaFromCloudinary,
   uploadMedia,
@@ -5,7 +6,7 @@ import {
 import generateTokenAndSetCookie from "../helper/generateTokenAndSetCookie.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import {v2 as cloudinary} from 'cloudinary'
+import { v2 as cloudinary } from "cloudinary";
 import { Readable } from "stream";
 
 export const signup = async (req, res, next) => {
@@ -82,13 +83,11 @@ export const updateProfile = async (req, res, next) => {
   try {
     const userId = req.id;
     const { name } = req.body;
-    const profileImage = req.file;
+    let profileImage = req.file;
     if (!profileImage) {
-      return res
-        .status(400)
-        .json({ message: "Profile image is required", success: false });
+      profileImage = null;
     }
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password -__v");
     if (!user) {
       return res
         .status(404)
@@ -100,19 +99,40 @@ export const updateProfile = async (req, res, next) => {
       const publicId = user.photoUrl.split("/").pop().split(".")[0];
       await deleteMediaFromCloudinary(publicId);
     }
+    if (profileImage) {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { resource_type: "auto" },
+        (error, result) => {
+          if (error) {
+            console.log("upload failed error: ", error);
+            return res.status(500).json({ error: "Upload failed" });
+          }
 
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { resource_type: "auto" },
-      (error, result) => {
-        if (error) {
-          console.log("upload failed error: ", error);
-          return res.status(500).json({ error: "Upload failed" });
+          user.name = name;
+          user.profileImage = result.secure_url;
+          user.save();
+
+          res
+            .status(200)
+            .json({
+              message: "Profile updated successfully",
+              success: true,
+              user,
+            });
         }
-  });
+      );
 
-    // Convert the buffer to a readable stream and pipe it to the upload stream
-    const bufferStream = Readable.from(profileImage.buffer);
-    bufferStream.pipe(uploadStream);
+      // Convert the buffer to a readable stream and pipe it to the upload stream
+      const bufferStream = Readable.from(profileImage.buffer);
+      bufferStream.pipe(uploadStream);
+    }
+    if (!profileImage && name) {
+      user.name = name;
+      user.save();
+      res
+        .status(200)
+        .json({ message: "Profile updated successfully", success: true, user });
+    }
   } catch (error) {
     next(error);
   }

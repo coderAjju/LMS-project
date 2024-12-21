@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import authRoutes from './routes/auth.routes.js'
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
+import courseRoutes from './routes/course.routes.js'
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/course",courseRoutes)
 
 // handle incoming error from controller 
 app.use((err, req, res, next) => {
