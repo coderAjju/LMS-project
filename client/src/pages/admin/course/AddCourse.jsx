@@ -35,7 +35,7 @@ const AddCourse = () => {
         throw new Error(response.error);
       }
       setIsCreateCourse(!isCreateCourse);
-      navigate('/admin/course');
+      navigate("/admin/course");
     } catch (error) {
       console.error(error.message);
       toast.error(error.message);
@@ -75,11 +75,17 @@ const AddCourse = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Category</SelectLabel>
                 <SelectItem value="nextjs">Next JS</SelectItem>
+                <SelectLabel>Category</SelectLabel>
                 <SelectItem value="datascience">Data Science</SelectItem>
                 <SelectItem value="docker">Docker</SelectItem>
-              </SelectGroup>
+                <SelectItem value="react">React</SelectItem>
+                <SelectItem value="nodejs">Node JS</SelectItem>
+                <SelectItem value="mongodb">Mongo DB</SelectItem>
+                <SelectItem value="python">Python</SelectItem>
+                <SelectItem value="java">Fullstack development</SelectItem>
+                <SelectItem value="java">MERN stack development</SelectItem>
+              </SelectGroup>{" "}
             </SelectContent>
           </Select>
         </div>
@@ -87,8 +93,7 @@ const AddCourse = () => {
           <Button variant="outline" onClick={handleBackBtn}>
             Back
           </Button>
-          <Button disabled={isLoading} onClick={handleCreateCourse}
-          >
+          <Button disabled={isLoading} onClick={handleCreateCourse}>
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

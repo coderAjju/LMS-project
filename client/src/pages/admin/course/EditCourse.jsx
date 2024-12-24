@@ -13,7 +13,7 @@ const EditCourse = () => {
                 <Button className="hover:text-blue-600" variant="link">Go to lectures page</Button>
             </Link>
         </div>
-        <CourseTab/>  
+        <CourseTab/>    
     </div>
   )
 }

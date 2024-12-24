@@ -119,7 +119,7 @@ export const updateProfile = async (req, res, next) => {
               success: true,
               user,
             });
-        }
+        } 
       );
 
       // Convert the buffer to a readable stream and pipe it to the upload stream
