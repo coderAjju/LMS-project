@@ -26,3 +26,25 @@ export const createLecture = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getAllLectures = async (req, res, next) => {
+    try {
+        const lectures = await lectureModel.find();
+        return res.status(200).json({lectures});
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getSingleLecture = async (req,res,next) => {
+    try {
+        const lectureId = req.params.lectureId;
+        if(!lectureId){
+            throw new Error("Lecture id is required");
+        }
+        const lecture = await lectureModel.findById(lectureId);
+        return res.status(200).json({lecture});
+    } catch (error) {
+        next(error)
+    }
+}

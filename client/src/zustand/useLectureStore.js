@@ -18,6 +18,19 @@ const useLectureStore = create((set,get) => ({
       return { success: false, error: errorMessage };
     }
   },
+  GetAllLectures: async () => {
+    try {
+      const res = await axiosInstance.get("/api/lecture/allLectures");
+      return { success: true, data: res.data };
+    } catch (error) {
+      console.error(error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred.";
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+    
+  },
 }));
 
 export default useLectureStore;
