@@ -1,5 +1,5 @@
 import {Course} from "../models/course.model.js";
-import lectureModel from "../models/lecture.model.js";
+import Lecture from "../models/lecture.model.js";
 
 export const createLecture = async (req, res, next) => {
     try {
@@ -10,7 +10,7 @@ export const createLecture = async (req, res, next) => {
         }
 
         //create lecture
-        const lecture = await lectureModel.create({
+        const lecture = await Lecture.create({
             lectureTitle,
         })
 
@@ -29,7 +29,7 @@ export const createLecture = async (req, res, next) => {
 
 export const getAllLectures = async (req, res, next) => {
     try {
-        const lectures = await lectureModel.find();
+        const lectures = await Lecture.find();
         return res.status(200).json({lectures});
     } catch (error) {
         next(error);
@@ -42,9 +42,36 @@ export const getSingleLecture = async (req,res,next) => {
         if(!lectureId){
             throw new Error("Lecture id is required");
         }
-        const lecture = await lectureModel.findById(lectureId);
+        const lecture = await Lecture.findById(lectureId);
         return res.status(200).json({lecture});
     } catch (error) {
         next(error)
+    }
+}
+
+export const uploadLecture = async (req,res,next) => {
+    try {
+        const lectureId = req.params.lectureId;
+        const {lectureTitle,uploadVideoInfo} = req.body;
+
+        if(!lectureId){
+            throw new Error("Lecture id is required");
+        }
+        const lecture = await Lecture.findById(lectureId);
+        if(!lecture){
+            throw new Error("Lecture not found");
+        }
+        console.log(req.body)
+        if(!uploadVideoInfo.videoUrl || !uploadVideoInfo.publicId || !lectureTitle){
+            throw new Error("All field are required");
+        }
+        lecture.videoUrl = uploadVideoInfo.videoUrl;
+        lecture.publicId = uploadVideoInfo.publicId;
+        lecture.lectureTitle = lectureTitle;
+        await lecture.save();
+
+        return res.status(200).json({lecture,message:"Lecture uploaded successfully"});
+    } catch (error) {
+        next(error);
     }
 }

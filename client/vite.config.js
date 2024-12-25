@@ -5,7 +5,7 @@ import { resolve } from 'path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  resolve: {
+   resolve: {
     alias: {
       '@': resolve(__dirname, './src'), // '@' ko './src' directory se map karna
     },

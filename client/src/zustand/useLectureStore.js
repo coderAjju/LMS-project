@@ -29,8 +29,21 @@ const useLectureStore = create((set,get) => ({
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     }
-    
   },
+  UploadLecture : async (lectureId,uploadVideoInfo,lectureTitle,isFree) => {
+    try {
+      const res = await axiosInstance.post(`/api/lecture/${lectureId}/upload`, {uploadVideoInfo,lectureTitle,isFree});
+      
+      toast.success(res.data.message || "Lecture updated successfully!");
+      return { success: true, data: res.data };
+    } catch (error) {
+      console.error(error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "An error occurred.";
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  }
 }));
 
 export default useLectureStore;

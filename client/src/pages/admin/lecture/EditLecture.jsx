@@ -4,23 +4,28 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import axiosInstance from "@/lib/axios";
-import { ArrowLeft, ArrowLeftCircle, ArrowRightCircle, Loader2 } from "lucide-react";
+import useLectureStore from "@/zustand/useLectureStore";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EditLecture = () => {
   const params = useParams();
   const lectureId = params.lectureId;
   const [lectureTitle, setLectureTitle] = useState("")
   const [uploadVideoInfo, setUploadVideoInfo] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [isFree, setIsFree] = useState(false)
  const [mediaProgress, setMediaProgress] = useState(false)
  const [uploadProgress, setUploadProgress] = useState(0)
  const [btnDisabled, setBtnDisabled] = useState(true)
+ const {UploadLecture} = useLectureStore();
+  const navigate= useNavigate();
 
  const fileChangeHandler = async (e) => {
     const file = e.target.files[0];
+
     if(file){
         const formData = new FormData();
         formData.append("video",file)
@@ -50,6 +55,26 @@ const EditLecture = () => {
     }
  }
 
+  const uploadLecture = async () => {
+      console.log(uploadVideoInfo)
+      console.log(isFree)
+      console.log(lectureTitle)
+      if(!uploadVideoInfo || !lectureTitle) return toast.error("All fields are required")
+      try {
+      setIsLoading(true);
+      const response = await UploadLecture(lectureId,uploadVideoInfo,lectureTitle,isFree);
+      if (!response.success) {
+        throw new Error(response.error);  
+      }
+    } catch (error) {
+      console.error(error.message);
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    } 
+  }
+
+
   useEffect(() => {
       (async()=>{
           try {
@@ -60,9 +85,12 @@ const EditLecture = () => {
           }
       })()
   },[])
+
+
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3" onClick={()=>navigate(-1)}>
         <div className=" rounded-full border-2 border-gray-200 text-gray-700 w-8 h-8 flex justify-center items-center">
           <ArrowLeft className="" size={16} />
         </div>
@@ -97,7 +125,15 @@ const EditLecture = () => {
                 </div>
             )
         }
-        <Button className="w-fit" disabled={btnDisabled}>Upload Lecture</Button>
+        <Button onClick={uploadLecture} className="w-fit" disabled={btnDisabled}>
+          {
+            isLoading ? <>
+            <Loader2 className="animate-spin"/> 
+            <span>Uploading...</span>
+            </>
+            : "Upload Lecture"
+          }
+        </Button>
       </div>
     </div>
   );
