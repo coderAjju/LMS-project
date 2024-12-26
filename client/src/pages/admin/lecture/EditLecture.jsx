@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const EditLecture = () => {
   const params = useParams();
-  const lectureId = params.lectureId;
+  const {lectureId, courseId} = params;
   const [lectureTitle, setLectureTitle] = useState("")
   const [uploadVideoInfo, setUploadVideoInfo] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -62,7 +62,7 @@ const EditLecture = () => {
       if(!uploadVideoInfo || !lectureTitle) return toast.error("All fields are required")
       try {
       setIsLoading(true);
-      const response = await UploadLecture(lectureId,uploadVideoInfo,lectureTitle,isFree);
+      const response = await UploadLecture(courseId,lectureId ,uploadVideoInfo,lectureTitle,isFree);
       if (!response.success) {
         throw new Error(response.error);  
       }
@@ -86,6 +86,16 @@ const EditLecture = () => {
       })()
   },[])
 
+  const removeLecture = async () => {
+      try {
+          const res = await axiosInstance.delete(`/api/lecture/${lectureId}`);
+          toast.success(res.data.message);
+          navigate(`/admin/course/${courseId}/lecture`)
+      } catch (error) {
+          console.log(error);
+      }
+  }
+
 
 
   return (
@@ -100,7 +110,7 @@ const EditLecture = () => {
         <div>
           <span className="font-semibold">Edit Lecture</span>
           <p className="text-gray-500 text-sm">Make changes and click save when done.</p>
-          <Button variant="destructive" className="mt-2">Remove Lecture</Button>
+          <Button variant="destructive" className="mt-2" onClick={removeLecture}>Remove Lecture</Button>
         </div>
         <div>
           <Label>Title</Label>
@@ -111,7 +121,7 @@ const EditLecture = () => {
           <Input type="file" accept="video/*" name="video" onChange={fileChangeHandler} />
         </div>
         <div className="flex items-center space-x-2">
-          <Switch id="freeVideo" />
+          <Switch id="freeVideo" checked={isFree} onCheckedChange={(checked) => setIsFree(checked)}/>
           <Label htmlFor="freeVideo">Is this video FREE?</Label>
         </div>
         {

@@ -30,9 +30,9 @@ const useLectureStore = create((set,get) => ({
       return { success: false, error: errorMessage };
     }
   },
-  UploadLecture : async (lectureId,uploadVideoInfo,lectureTitle,isFree) => {
+  UploadLecture : async (courseId,lectureId,uploadVideoInfo,lectureTitle,isFree) => {
     try {
-      const res = await axiosInstance.post(`/api/lecture/${lectureId}/upload`, {uploadVideoInfo,lectureTitle,isFree});
+      const res = await axiosInstance.post(`/api/lecture/${lectureId}/upload`, {uploadVideoInfo,lectureTitle,isFree,courseId});
       
       toast.success(res.data.message || "Lecture updated successfully!");
       return { success: true, data: res.data };

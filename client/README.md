@@ -1,1 +1,2 @@
-lecture ke andar video upload ho rha hai proper tarike se ab bus us file mein upload lecture ki functionality per dhyaan dena hai
+Bugs 👇
+1. jo lecture upload kiya hai cloudinary per wo destroy nhi ho rha hai lecture delete kar rhe hai to, pata nhi kyu but kaafi try kiya

@@ -82,6 +82,7 @@ const CourseTab = () => {
         if (!response.success) {
           throw new Error(response.error);
         }
+        console.log(response);
         navigate("/admin/course");
       } catch (error) {
         console.error(error.message);
