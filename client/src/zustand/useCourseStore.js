@@ -49,6 +49,18 @@ const useCourseStore = create((set) => ({
       return { success: false, error: errorMessage };
     }
   },
+  publishCourse:async (courseId,value) => {
+    try {
+      const res = await axiosInstance.put(`/api/course/${courseId}?publish=${value}`);
+      toast.success(res.data.message || "Course published successfully!");
+      return {success:true,data:res.data};
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error.response?.data?.message || error.message || "An error occurred.";
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  }
 }));
 
 export default useCourseStore;

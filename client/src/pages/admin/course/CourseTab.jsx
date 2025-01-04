@@ -22,15 +22,16 @@ import axiosInstance from "@/lib/axios";
 import useCourseStore from "@/zustand/useCourseStore";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 const CourseTab = () => {
-  const isPublished = true;
+  const [isPublished, setIsPublished] = useState();
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate();
   const [previewThumbnail, setPreviewThumbnail] = useState("")
-  const {updateCourse} = useCourseStore();
+  const {updateCourse,publishCourse} = useCourseStore();
   const [input, setInput] = useState({
     courseTitle: "",
     subTitle: "",
@@ -46,6 +47,12 @@ const CourseTab = () => {
     (async()=>{
         const response = await axiosInstance.get(`/api/course/${param.courseId}`)
         setInput(response.data.course)
+        if(response.data.course.lectures.length > 0){
+          setIsPublished(true)
+        }else{
+          setIsPublished(false);
+        }
+        console.log(isPublished)
         if(response.data.course.courseThumbnail){
             setPreviewThumbnail(response.data.course.courseThumbnail)
         }
@@ -96,6 +103,24 @@ const CourseTab = () => {
     return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>
   }
 
+  const handlePublishMethod = async() => {
+    try {
+      const courseId = param.courseId;
+      const response = await publishCourse(courseId,isPublished);
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+      if (response.success) {
+        console.log(response);
+        setIsPublished(response.isPublished);
+        
+      }
+    } catch (error) {
+      console.log(error.message)
+      toast.error(error.message);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
@@ -105,10 +130,11 @@ const CourseTab = () => {
             Make changes to your courses here. Click save when you're done.
           </CardDescription>
         </div>
-        <div>
-          <Button variant="outline">
-            {isPublished ? "Unpublished" : "Published"}
+        <div className="flex items-center gap-2">
+          <Button disabled = {!isPublished} variant="outline" onClick={handlePublishMethod} className={`${!isPublished ? "cursor-not-allowed" : ""}`}>
+            {!isPublished ? "Publish" : "Published"}
           </Button>
+         
           <Button>Remove Courses</Button>
         </div>
       </CardHeader>

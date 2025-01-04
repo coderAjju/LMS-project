@@ -56,9 +56,6 @@ const EditLecture = () => {
  }
 
   const uploadLecture = async () => {
-      console.log(uploadVideoInfo)
-      console.log(isFree)
-      console.log(lectureTitle)
       if(!uploadVideoInfo || !lectureTitle) return toast.error("All fields are required")
       try {
       setIsLoading(true);
@@ -66,6 +63,8 @@ const EditLecture = () => {
       if (!response.success) {
         throw new Error(response.error);  
       }
+      console.log(response.data);
+      // navigate(`/admin/course/${courseId}/lecture`)
     } catch (error) {
       console.error(error.message);
       toast.error(error.message);

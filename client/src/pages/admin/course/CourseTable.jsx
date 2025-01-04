@@ -65,7 +65,7 @@ const CourseTable = () => {
           {
             courses.map((course) => (
               <TableRow key={course._id}>
-                <TableCell>{course?.price || "NA"}</TableCell>
+                <TableCell>{course?.coursePrice || "NA"}</TableCell>
                 <TableCell><Badge>{course.isPublished ? "Published" : "Draft"}</Badge></TableCell>
                 <TableCell className="font-medium">{course.courseTitle}</TableCell>
                 <TableCell className="text-left">
