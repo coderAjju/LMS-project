@@ -28,10 +28,10 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const CourseTab = () => {
   const [isPublished, setIsPublished] = useState();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [previewThumbnail, setPreviewThumbnail] = useState("")
-  const {updateCourse,publishCourse} = useCourseStore();
+  const [previewThumbnail, setPreviewThumbnail] = useState("");
+  const { updateCourse, publishCourse } = useCourseStore();
   const [input, setInput] = useState({
     courseTitle: "",
     subTitle: "",
@@ -40,24 +40,27 @@ const CourseTab = () => {
     courseLevel: "",
     coursePrice: "",
     courseThumbnail: "",
+    isPublished: false,
+    lectures: [],
   });
 
   const param = useParams();
-  useEffect(()=>{
-    (async()=>{
-        const response = await axiosInstance.get(`/api/course/${param.courseId}`)
-        setInput(response.data.course)
-        if(response.data.course.lectures.length > 0){
-          setIsPublished(true)
-        }else{
-          setIsPublished(false);
-        }
-        console.log(isPublished)
-        if(response.data.course.courseThumbnail){
-            setPreviewThumbnail(response.data.course.courseThumbnail)
-        }
-    })()
-  },[])
+  useEffect(() => {
+    (async () => {
+      const response = await axiosInstance.get(`/api/course/${param.courseId}`);
+      setInput(response.data.course);
+      
+      if (response.data.course.isPublished) {
+        setIsPublished(true);
+      } else {
+        setIsPublished(false);
+      }
+      
+      if (response.data.course.courseThumbnail) {
+        setPreviewThumbnail(response.data.course.courseThumbnail);
+      }
+    })();
+  }, []);
 
   const handleChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -73,50 +76,52 @@ const CourseTab = () => {
 
   const selectThumbnail = (value) => {
     const file = value.target.files?.[0];
-    if(file){
-        setInput({...input,courseThumbnail:file})
-        const fileReader = new FileReader();
-        fileReader.onloadend = () => {
-            return setPreviewThumbnail(fileReader.result)
-        }
-        fileReader.readAsDataURL(file)
+    if (file) {
+      setInput({ ...input, courseThumbnail: file });
+      const fileReader = new FileReader();
+      fileReader.onloadend = () => {
+        return setPreviewThumbnail(fileReader.result);
+      };
+      fileReader.readAsDataURL(file);
     }
   };
-  const updateCourseMethod = async()=>{
+  const updateCourseMethod = async () => {
     try {
-        setIsLoading(true);
-        const response = await updateCourse(input);
-        if (!response.success) {
-          throw new Error(response.error);
-        }
-        console.log(response);
-        navigate("/admin/course");
-      } catch (error) {
-        console.error(error.message);
-        toast.error(error.message);
-      } finally {
-        setIsLoading(false);
-      }  
+      setIsLoading(true);
+      const response = await updateCourse(input);
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+      console.log(response);
+      navigate("/admin/course");
+    } catch (error) {
+      console.error(error.message);
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   }
 
-  if(isLoading){
-    return <div className="flex justify-center items-center h-screen"><Loader2 className="animate-spin" /></div>
-  }
-
-  const handlePublishMethod = async() => {
+  const handlePublishMethod = async () => {
     try {
       const courseId = param.courseId;
-      const response = await publishCourse(courseId,isPublished);
+      const response = await publishCourse(courseId, !isPublished);
       if (!response.success) {
         throw new Error(response.error);
       }
       if (response.success) {
-        console.log(response);
-        setIsPublished(response.isPublished);
-        
+        setIsPublished(!isPublished);
       }
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
       toast.error(error.message);
     }
   };
@@ -131,10 +136,17 @@ const CourseTab = () => {
           </CardDescription>
         </div>
         <div className="flex items-center gap-2">
-          <Button disabled = {!isPublished} variant="outline" onClick={handlePublishMethod} className={`${!isPublished ? "cursor-not-allowed" : ""}`}>
-            {!isPublished ? "Publish" : "Published"}
+          <Button
+            disabled={input.lectures.length === 0}
+            variant="outline"
+            onClick={handlePublishMethod}
+            className={`${
+              input.lectures.length === 0 ? "cursor-not-allowed" : ""
+            }`}
+          >
+            {!isPublished ? "Publish" : "Unpublish"}
           </Button>
-         
+
           <Button>Remove Courses</Button>
         </div>
       </CardHeader>
@@ -204,15 +216,15 @@ const CourseTab = () => {
               </Select>
             </div>
             <div>
-                <Label>Price in (INR)</Label>
-                <Input
-                  type="number"
-                  name="coursePrice"
-                  value={input.coursePrice}
-                  placeholder="Ex. 1000"
-                  onChange={handleChange}
-                  className="w-fit"
-                />
+              <Label>Price in (INR)</Label>
+              <Input
+                type="number"
+                name="coursePrice"
+                value={input.coursePrice}
+                placeholder="Ex. 1000"
+                onChange={handleChange}
+                className="w-fit"
+              />
             </div>
           </div>
           <div>
@@ -223,19 +235,27 @@ const CourseTab = () => {
               className="w-fit"
               onChange={selectThumbnail}
             />
-                 {
-                     previewThumbnail && <img src={previewThumbnail} className=" w-64 my-2" alt="course thumbnail" />
-                 }
+            {previewThumbnail && (
+              <img
+                src={previewThumbnail}
+                className=" w-64 my-2"
+                alt="course thumbnail"
+              />
+            )}
           </div>
           <div>
-            <Button onClick={()=>navigate("/admin/course")} variant="outline">Cancel</Button>
+            <Button onClick={() => navigate("/admin/course")} variant="outline">
+              Cancel
+            </Button>
             <Button disabled={isLoading} onClick={updateCourseMethod}>
-                {
-                    isLoading ? <>
-                        <Loader2 className="size-4 animate-spin"/>
-                        Please wait
-                    </> : "Save"
-                }
+              {isLoading ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Save"
+              )}
             </Button>
           </div>
         </div>

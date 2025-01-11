@@ -1,6 +1,6 @@
 import express from 'express';
 import protectedRoute from '../middleware/protectedRoute.js';
-import { createCourse, getCreatorCourses,getSingleCourse,togglePublishCourse,updateCourse } from '../controllers/course.controller.js';
+import { createCourse, getCreatorCourses,getSingleCourse,publishCourse,publishedCourses,togglePublishCourse,updateCourse } from '../controllers/course.controller.js';
 import upload from '../config/multer.js';
 
 const Router = express.Router();

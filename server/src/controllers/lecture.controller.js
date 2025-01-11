@@ -29,12 +29,26 @@ export const createLecture = async (req, res, next) => {
     }
 };
 
-export const getAllLectures = async (req, res, next) => {
+export const getAllLectures = async (req,res) => {
     try {
-        const lectures = await Lecture.find();
-        return res.status(200).json({lectures});
+        const {courseId} = req.params;
+        console.log(courseId);
+        const course = await Course.findById(courseId).populate("lectures");
+        console.log(course);
+        if(!course){
+            return res.status(404).json({
+                message:"Course not found"
+            })
+        }
+        return res.status(200).json({
+            lectures: course.lectures
+        });
+
     } catch (error) {
-        next(error);
+        console.log(error.message);
+        return res.status(500).json({
+            message:"Failed to get lectures"
+        })
     }
 }
 
@@ -113,3 +127,5 @@ export const removeLecture = async (req,res,next) => {
         next(error);
     }
 }
+
+

@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Badge = () => {
+const Badge = ({level}) => {
   return (
     <div className=' bg-blue-600 text-white px-2 py-1 text-xs rounded-full'>
-        Advance
+        {level}
     </div>
   )
 }

@@ -18,10 +18,11 @@ import { Edit } from "lucide-react";
 const CourseTable = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [courses, setCourses] = useState([]);
-  const { isCreateCourse, setIsCreateCourse,getAllCreatorCourse } = useCourseStore();
+  const { isCreateCourse, setIsCreateCourse, getAllCreatorCourse } =
+    useCourseStore();
   const navigate = useNavigate();
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchCourses = async () => {
       setIsLoading(true);
       const response = await getAllCreatorCourse();
@@ -34,14 +35,14 @@ const CourseTable = () => {
     };
 
     fetchCourses();
-  }, [getAllCreatorCourse,isCreateCourse]);
+  }, [getAllCreatorCourse, isCreateCourse]);
   if (isLoading) {
     return <div>Loading courses...</div>;
   }
 
-  if (courses.length === 0) {
-    return <div>No courses created yet.</div>;
-  }
+  // if (courses.length === 0) {
+  //   toast.info("No course created yet.");
+  // }
 
   return (
     <div className="w-full">
@@ -52,7 +53,11 @@ const CourseTable = () => {
         <Outlet />
       ) : (
         <Table className="">
-          <TableCaption>A list of your recent courses.</TableCaption>
+          {courses.length === 0 ? (
+            <TableCaption>No courses created yet.</TableCaption>
+          ) : (
+            <TableCaption>A list of your recent courses.</TableCaption>
+          )}
           <TableHeader>
             <TableRow>
               <TableHead>Price</TableHead>
@@ -62,18 +67,26 @@ const CourseTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-          {
-            courses.map((course) => (
+            {courses.map((course) => (
               <TableRow key={course._id}>
                 <TableCell>{course?.coursePrice || "NA"}</TableCell>
-                <TableCell><Badge>{course.isPublished ? "Published" : "Draft"}</Badge></TableCell>
-                <TableCell className="font-medium">{course.courseTitle}</TableCell>
+                <TableCell>
+                  <Badge>{course.isPublished ? "Published" : "Draft"}</Badge>
+                </TableCell>
+                <TableCell className="font-medium">
+                  {course.courseTitle}
+                </TableCell>
                 <TableCell className="text-left">
-                  <Button size="sm" varient="ghost" onClick={()=>navigate(`${course._id}`)} ><Edit/></Button>
+                  <Button
+                    size="sm"
+                    varient="ghost"
+                    onClick={() => navigate(`${course._id}`)}
+                  >
+                    <Edit />
+                  </Button>
                 </TableCell>
               </TableRow>
-            ))
-          }
+            ))}
           </TableBody>
         </Table>
       )}

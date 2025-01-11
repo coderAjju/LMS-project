@@ -39,7 +39,7 @@ const CreateLecture = () => {
     (async()=>{
       try {
         setLoading(true);
-        const response = await GetAllLectures();
+        const response = await GetAllLectures(courseId);
         if (!response.success) {
           throw new Error(response.error);
         }

@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import courseRoutes from './routes/course.routes.js'
 import lectureRoutes from './routes/lecture.routes.js'
 import videoUploaderRoute from './routes/videoUploader.route.js'
+import { Course } from "./models/course.model.js";
 dotenv.config();
 const app = express();
 
@@ -18,8 +19,13 @@ app.use(cors({
 
 app.use(cookieParser());
 
-app.get("/", (req, res) => {    
-    res.send("Hello World!");
+app.get("/api/course/publishedCourses", async(req, res) => {    
+    try {
+        const response = await Course.find({isPublished: true}).populate({path:"creator", select:"name profileImage"});
+        res.status(200).json(response);
+    } catch (error) {
+        console.log(error.message)
+    }
 });
 
 app.use("/api/auth", authRoutes);

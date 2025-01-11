@@ -18,9 +18,9 @@ const useLectureStore = create((set,get) => ({
       return { success: false, error: errorMessage };
     }
   },
-  GetAllLectures: async () => {
+  GetAllLectures: async (courseId) => {
     try {
-      const res = await axiosInstance.get("/api/lecture/allLectures");
+      const res = await axiosInstance.get(`/api/lecture/${courseId}/allLectures`);
       return { success: true, data: res.data };
     } catch (error) {
       console.error(error);

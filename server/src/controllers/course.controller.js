@@ -114,23 +114,46 @@ export const updateCourse = async (req, res, next) => {
   }
 };
 
-
-export const togglePublishCourse = async (req,res,next)=>{
+export const togglePublishCourse = async (req, res, next) => {
   try {
-      const {courseId} = req.params;
-      const {publish} = req.query;
-      const course = await Course.findById(courseId);
-      if(!course){
-        return res.status(404).json({message:"Course not found"}  )
-      }
+    const { courseId } = req.params;
+    const { publish } = req.query;
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
 
-      // publish course based on the query parameter of publish
-      course.isPublished = publish === "true";
-      course.save();
+    // publish course based on the query parameter of publish
+    course.isPublished = publish === "true";
+    course.save();
 
-      const statusMessage = course.isPublished ? "Published" : "Unpublished";
-      return res.status(200).json({isPublished:course.isPublished,message:`Course ${statusMessage} successfully`});
+    const statusMessage = course.isPublished ? "Published" : "Unpublished";
+    return res.status(200).json({
+      isPublished: course.isPublished,
+      message: `Course ${statusMessage} successfully`,
+    });
   } catch (error) {
     next(error);
   }
-}
+};
+
+export const publishedCourses = async (req, res, next) => {
+  try {
+    console.log("Request received:");
+    
+    const courses = await Course.find({ isPublished: true })
+      
+    
+    if (!courses || courses.length === 0) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error("Error occurred:", error);
+    next(error);
+  }
+};
+
+
+

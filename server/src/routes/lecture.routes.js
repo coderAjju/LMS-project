@@ -4,7 +4,7 @@ import { createLecture, getAllLectures, getSingleLecture,removeLecture,uploadLec
 const Router = express.Router();
 
 Router.post("/:courseId/create",protectedRoute,createLecture);
-Router.get("/allLectures",protectedRoute,getAllLectures);
+Router.get("/:courseId/allLectures",protectedRoute,getAllLectures);
 Router.get("/:lectureId",protectedRoute,getSingleLecture);
 Router.post("/:lectureId/upload",protectedRoute,uploadLecture);
 Router.delete("/:lectureId",protectedRoute,removeLecture); 
