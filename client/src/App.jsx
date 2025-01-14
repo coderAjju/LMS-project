@@ -18,22 +18,22 @@ import AddCourse from "./pages/admin/course/AddCourse";
 import EditCourse from "./pages/admin/course/EditCourse";
 import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
+import CourseDetailPage from "./components/student/CourseDetailPage";
 
 const App = () => {
   const { setUser } = useAuthstore();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await axiosInstance.get("/api/auth/user");
         setUser(res.data.user);
-        dispatch(userLoggedIn(res.data.user));
+        console.log(res)
         if (!res.data.success) {
           toast.error(res.data.message);
         }
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
         // toast.error(error.response.data.message || error.message)
       }
     }
@@ -48,6 +48,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/my-learning" element={<MyLearning />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/course-detail/:courseId" element={<CourseDetailPage />} />
 
         {/* // admin routes start from here */}
         <Route path="/admin" element={<Sidebar/>} >

@@ -1,6 +1,5 @@
 import {
   deleteMediaFromCloudinary,
-  uploadMedia,
 } from "../config/cloudinary.js";
 import { Course } from "../models/course.model.js";
 

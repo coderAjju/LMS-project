@@ -52,7 +52,7 @@ export const login = async (req, res, next) => {
 
     await generateTokenAndSetCookie(user._id, user.role, res);
 
-    res.status(200).json({ message: "User logged successfully", user });
+    res.status(200).json({ message: `Welcome ${user.name}`, user });
   } catch (error) {
     next(error);
   }

@@ -8,6 +8,8 @@ import courseRoutes from './routes/course.routes.js'
 import lectureRoutes from './routes/lecture.routes.js'
 import videoUploaderRoute from './routes/videoUploader.route.js'
 import { Course } from "./models/course.model.js";
+import purchaseRoute from './routes/purchase.routes.js'
+
 dotenv.config();
 const app = express();
 
@@ -32,13 +34,17 @@ app.use("/api/auth", authRoutes);
 app.use("/api/course",courseRoutes)
 app.use("/api/lecture",lectureRoutes)
 app.use("/api/media",videoUploaderRoute)
+app.use("/api/purchase",purchaseRoute)
+
 // handle incoming error from controller 
 app.use((err, req, res, next) => {
     console.error(err.message);
     res.status(500).json({message:"Internal server error"});
 });
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 4000
+
+app.listen(PORT, () => {
     connectDB();
     console.log("Example app listening on port 3000!");
 });
