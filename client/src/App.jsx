@@ -19,6 +19,7 @@ import EditCourse from "./pages/admin/course/EditCourse";
 import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourseDetailPage from "./components/student/CourseDetailPage";
+import PrivateRoute from "./pages/ProtectedRoute";
 
 const App = () => {
   const { setUser } = useAuthstore();
@@ -28,7 +29,7 @@ const App = () => {
       try {
         const res = await axiosInstance.get("/api/auth/user");
         setUser(res.data.user);
-        console.log(res)
+        console.log("user data fetched")
         if (!res.data.success) {
           toast.error(res.data.message);
         }
@@ -48,7 +49,9 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/my-learning" element={<MyLearning />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/course-detail/:courseId" element={<CourseDetailPage />} />
+        <Route path="/course-detail/:courseId" element={<PrivateRoute>
+          <CourseDetailPage />
+        </PrivateRoute>} />
 
         {/* // admin routes start from here */}
         <Route path="/admin" element={<Sidebar/>} >
