@@ -10,13 +10,15 @@ import {
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import BuyCourseButton from "../BuyCourseButton";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
+import ReactPlayer from "react-player";
 
 const CourseDetailPage = () => {
   const {courseId} = useParams();
+  const navigate = useNavigate();
   const [courseDetail, setCourseDetail] = useState({})
   const [isCoursePurchased, setIsCoursePurchased] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -41,6 +43,11 @@ const CourseDetailPage = () => {
     return <div className="mt-20">
       Laoding...
     </div>
+  }
+  const handleContinueCourse = ()=>{
+    if(isCoursePurchased){
+      navigate(`/course-progress/${courseId}`)
+    }
   }
   return (
     <div className="mt-24 space-y-5">
@@ -86,9 +93,15 @@ const CourseDetailPage = () => {
         </div>
         <div className="w-full lg:w-1/3">
             <Card>
-              <CardContent>
-                <div className="w-full aspect-video mb-4">
-                React player Video ayega
+              <CardContent className="p-4 flex flex-col">
+                <div className="w-full relative aspect-video mb-4">
+                  <ReactPlayer
+                   width="100%"
+                   height="100%"
+                   style={{ position: "absolute", top: 0, left: 0 }}
+                    url={courseDetail?.lectures[0]?.videoUrl}
+                    controls
+                  />
                 </div>
                 <h1>Lecture title</h1>
                 <Separator className="my-2"/>
@@ -97,7 +110,7 @@ const CourseDetailPage = () => {
               <CardFooter>
                 {
                   isCoursePurchased ? (
-                    <Button>Continue learning</Button>
+                    <Button onClick={handleContinueCourse}>Continue learning</Button>
                   ):
                   <BuyCourseButton courseId={courseId}/>
                 }
