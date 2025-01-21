@@ -20,6 +20,7 @@ import CreateLecture from "./pages/admin/lecture/CreateLecture";
 import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourseDetailPage from "./components/student/CourseDetailPage";
 import PrivateRoute from "./pages/ProtectedRoute";
+import CourseProgress from "./components/student/CourseProgress";
 
 const App = () => {
   const { setUser } = useAuthstore();
@@ -29,7 +30,7 @@ const App = () => {
       try {
         const res = await axiosInstance.get("/api/auth/user");
         setUser(res.data.user);
-        console.log("user data fetched")
+        console.log("user data fetched");
         if (!res.data.success) {
           toast.error(res.data.message);
         }
@@ -49,21 +50,29 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/my-learning" element={<MyLearning />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/course-detail/:courseId" element={<PrivateRoute>
-          <CourseDetailPage />
-        </PrivateRoute>} />
+        <Route
+          path="/course-detail/:courseId"
+          element={
+            <PrivateRoute>
+              <CourseDetailPage />
+            </PrivateRoute>
+          }
+        />
 
         {/* // admin routes start from here */}
-        <Route path="/admin" element={<Sidebar/>} >
+        <Route path="/admin" element={<Sidebar />}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="course" element={<CourseTable />} >
-            <Route path="create" element={<AddCourse/>} />
+          <Route path="course" element={<CourseTable />}>
+            <Route path="create" element={<AddCourse />} />
           </Route>
-          <Route path="course/:courseId" element={<EditCourse/>}/>
-          <Route path="course/:courseId/lecture" element={<CreateLecture/>}/>
-          <Route path="course/:courseId/lecture/:lectureId" element={<EditLecture/>}/>
-
+          <Route path="course/:courseId" element={<EditCourse />} />
+          <Route path="course/:courseId/lecture" element={<CreateLecture />} />
+          <Route
+            path="course/:courseId/lecture/:lectureId"
+            element={<EditLecture />}
+          />
         </Route>
+        <Route path="/course-progress/:courseId" element={<CourseProgress />} />
       </Routes>
       <Toaster />
     </div>
