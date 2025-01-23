@@ -9,8 +9,6 @@ import Profile from "./components/student/Profile";
 import { useEffect } from "react";
 import axiosInstance from "./lib/axios";
 import useAuthstore from "./zustand/useAuthStore";
-import { useDispatch } from "react-redux";
-import { userLoggedIn } from "./store/slice/authSlice";
 import Sidebar from "./pages/admin/Sidebar";
 import Dashboard from "./pages/admin/Dashboard";
 import CourseTable from "./pages/admin/course/CourseTable";
@@ -60,7 +58,14 @@ const App = () => {
         />
 
         {/* // admin routes start from here */}
-        <Route path="/admin" element={<Sidebar />}>
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+            </PrivateRoute>
+          }
+        >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="course" element={<CourseTable />}>
             <Route path="create" element={<AddCourse />} />

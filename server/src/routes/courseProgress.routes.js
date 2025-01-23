@@ -1,11 +1,11 @@
 import express from "express";
-import protectedRoute from "../middleware/protectedRoute";
+import protectedRoute from "../middleware/protectedRoute.js";
 import {
   getCourseProgress,
   markAsCompleted,
   markAsInCompleted,
   updateLecutreProgress,
-} from "../controllers/courseProgress.controller";
+} from "../controllers/courseProgress.controller.js";
 
 const router = express.Router();
 

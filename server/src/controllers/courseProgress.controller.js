@@ -1,5 +1,5 @@
-import { Course } from "../models/course.model";
-import { CourseProgress } from "../models/courseProgress";
+import { Course } from "../models/course.model.js";
+import { CourseProgress } from "../models/courseProgress.js";
 
 export const getCourseProgress = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ export const getCourseProgress = async (req, res) => {
       courseId,
       userId,
     }).populate("courseId");
-    const courseDetails = await Course.findById(courseId);
+    const courseDetails = await Course.findById(courseId).populate("lectures");
 
     if (!courseDetails) {
       return res.status(404).json({
@@ -46,7 +46,7 @@ export const updateLecutreProgress = async (req, res) => {
     const userId = req.id;
 
     //fetch or create course Progress
-    let courseProgress = await courseProgress.findOne({ courseId, userId });
+    let courseProgress = await CourseProgress.findOne({ courseId, userId });
     if (!courseProgress) {
       courseProgress = new CourseProgress({
         userId,
@@ -71,9 +71,16 @@ export const updateLecutreProgress = async (req, res) => {
     let lectureProgressLength = courseProgress.lectureProgress.filter(
       (lectureProg) => lectureProg.viewed
     );
+    // console.log("total viewed lecture ", lectureProgressLength.length);
     const course = await Course.findById(courseId);
 
-    if (course.lectures.length === lectureProgressLength) {
+    console.log(
+      "total lecture in course ",
+      course.lectures.length,
+      "and total viewed lecture ",
+      lectureProgressLength.length
+    );
+    if (course.lectures.length === lectureProgressLength.length) {
       courseProgress.completed = true;
     }
     await courseProgress.save();
@@ -103,6 +110,7 @@ export const markAsCompleted = async (req, res) => {
     await courseProgress.save();
     return res.status(200).json({
       message: "Course marked as completed",
+      success: true,
     });
   } catch (error) {
     console.log(error);
@@ -122,10 +130,11 @@ export const markAsInCompleted = async (req, res) => {
     }
 
     courseProgress.lectureProgress.map((lecture) => (lecture.viewed = false));
-    courseProgress.completed = true;
+    courseProgress.completed = false;
     await courseProgress.save();
     return res.status(200).json({
       message: "Course marked as incompleted",
+      success: true,
     });
   } catch (error) {
     console.log(error);

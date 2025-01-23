@@ -1,6 +1,4 @@
-import {
-  deleteMediaFromCloudinary,
-} from "../config/cloudinary.js";
+import { deleteMediaFromCloudinary } from "../config/cloudinary.js";
 import { Course } from "../models/course.model.js";
 
 import { Readable } from "stream";
@@ -138,21 +136,15 @@ export const togglePublishCourse = async (req, res, next) => {
 
 export const publishedCourses = async (req, res, next) => {
   try {
-    console.log("Request received:");
-    
-    const courses = await Course.find({ isPublished: true })
-      
-    
+    const courses = await Course.find({ isPublished: true });
+
     if (!courses || courses.length === 0) {
       return res.status(404).json({ message: "Course not found" });
     }
-    
+
     res.status(200).json(courses);
   } catch (error) {
     console.error("Error occurred:", error);
     next(error);
   }
 };
-
-
-
