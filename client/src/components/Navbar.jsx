@@ -98,7 +98,7 @@ const Navbar = () => {
       {/* mobile  */}
       <div className="md:hidden flex justify-between items-center h-full w-full px-3">
         <div className="flex items-center gap-3">
-          <School size={"30"} />
+          <School onClick={()=>navigate("/")} size={"30"} />
           <h1 className="hidden sm:block text-2xl font-bold">Learn Online</h1>
         </div>
         <SheetDemo />

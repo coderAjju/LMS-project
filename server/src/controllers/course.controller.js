@@ -148,3 +148,67 @@ export const publishedCourses = async (req, res, next) => {
     next(error);
   }
 };
+
+export const searchCourse = async (req, res, next) => {
+  try {
+    let { query = "", categories = "", sortByPrice = "" } = req.query;
+
+    if (categories !== "") {
+      query = "";
+    }
+
+    // Parse categories into an array
+    const categoryArray = categories ? categories.split(",") : [];
+
+    // Build the base search criteria
+    const searchCriteria = {
+      isPublished: true,
+      $and: [],
+    };
+
+    // Add query-based search
+    if (query) {
+      searchCriteria.$and.push({
+        $or: [
+          { courseTitle: { $regex: query, $options: "i" } },
+          { subTitle: { $regex: query, $options: "i" } },
+          { category: { $regex: query, $options: "i" } },
+        ],
+      });
+    }
+
+    // Add category-based search
+    if (categoryArray.length > 0) {
+      searchCriteria.$and.push({
+        category: { $in: categoryArray },
+      });
+    }
+
+    // If no filters exist, remove $and
+    if (searchCriteria.$and.length === 0) {
+      delete searchCriteria.$and;
+    }
+
+    // Define sorting options
+    const sortOptions =
+      sortByPrice === "low"
+        ? { coursePrice: 1 }
+        : sortByPrice === "high"
+        ? { coursePrice: -1 }
+        : {};
+
+    // Fetch courses
+    const courses = await Course.find(searchCriteria)
+      .populate({ path: "creator", select: "name profileImage" })
+      .sort(sortOptions);
+
+    // Send the response
+    res.status(200).json({
+      courses: courses || [],
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    next(new Error("Internal Server Error"));
+  }
+};

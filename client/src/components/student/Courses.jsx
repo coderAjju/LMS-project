@@ -29,7 +29,7 @@ export const Courses = () => {
     <div className="bg-gray-50">
       <div className="max-w-7xl mx-auto p-6">
         <h1 className="font-bold text-3xl text-center mb-10">Our Courses</h1>
-        <div className={`flex gap-4 items-center flex-wrap lg:justify-center justify-center ${courses.length / 4 === 0 && "justify-center"}`}>
+        <div className={`flex gap-4 items-center flex-wrap justify-start ${courses.length / 4 === 0 && "justify-center"}`}>
           {Loading
             ? Array.from({ length: 8 }).map((_, index) => {
                 return <CourseSkeleten key={index} />;

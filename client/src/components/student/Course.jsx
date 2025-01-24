@@ -3,6 +3,7 @@ import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Badge from "../SmallComponent/Badge";
 import { Link } from "react-router-dom";
+import LazyLoad from "react-lazy-load";
 
 const Course = ({ course }) => {
   function capitalizeWords(str = "") {
@@ -17,11 +18,14 @@ const Course = ({ course }) => {
       <Card className="overflow-hidden rounded-lg dark:bg-gray-800 bg-white  shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 w-[330px] sm:w-[310px] md:w-[290px] ">
         <div className="relative">
           {(
-            <img
-              src={course?.courseThumbnail}
-              alt="course"
-              className="w-full h-44 object-cover rounded-t-lg"
-            />
+            <LazyLoad height={200} offset={100}>
+              <img
+                src={course?.courseThumbnail}
+                alt="course"
+                loading="lazy"
+                className="w-full h-44 object-cover rounded-t-lg"
+              />
+            </LazyLoad>
           ) || (
             <div className="w-full h-44 object-cover rounded-t-lg">
               loading...

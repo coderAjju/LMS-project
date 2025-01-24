@@ -19,6 +19,7 @@ import EditLecture from "./pages/admin/lecture/EditLecture";
 import CourseDetailPage from "./components/student/CourseDetailPage";
 import PrivateRoute from "./pages/ProtectedRoute";
 import CourseProgress from "./components/student/CourseProgress";
+import SearchPage from "./components/student/SearchPage";
 
 const App = () => {
   const { setUser } = useAuthstore();
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/my-learning" element={<MyLearning />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/course/search" element={<SearchPage />} />
         <Route
           path="/course-detail/:courseId"
           element={

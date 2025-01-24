@@ -108,13 +108,13 @@ export const stripeWebhook = async (req, res) => {
       }
       course.status = "completed";
 
-    //   // Make all lectures visible, by setting 'isPreviewFree' to true
-    //   if (course && course.lectures.length > 0) {
-    //     await lectureModel.updateMany(
-    //       { _id: { $in: course.lectures } },
-    //       { $set: { isPreviewFree: true } }
-    //     );
-    //   }
+      //   // Make all lectures visible, by setting 'isPreviewFree' to true
+      //   if (course && course.lectures.length > 0) {
+      //     await lectureModel.updateMany(
+      //       { _id: { $in: course.lectures } },
+      //       { $set: { isPreviewFree: true } }
+      //     );
+      //   }
 
       await course.save();
 
@@ -144,33 +144,29 @@ export const getCourseDetailWithPurchaseStatus = async (req, res) => {
     const userId = req.id;
 
     const course = await Course.findById(courseId)
-    .populate("lectures")
-    .populate("creator");
-    
+      .populate("lectures")
+      .populate("creator");
+
     if (!course) {
-        return res.status(404).json({
-            message: "Course not found",
-        });
+      return res.status(404).json({
+        message: "Course not found",
+      });
     }
-    
-    console.log("hello")
+
     const purchased = await CoursePurchase.findOne({
       courseId,
       userId,
     });
     if (!!purchased) {
-        console.log(course.lectures);
-        if (course && course.lectures.length > 0) {
-            console.log(!!purchased);
-            await lectureModel.updateMany(
+      if (course && course.lectures.length > 0) {
+        await lectureModel.updateMany(
           { _id: { $in: course.lectures } },
           { $set: { isPreviewFree: true } }
         );
       }
-    }else{
-        if (course && course.lectures.length > 0) {
-            console.log(!!purchased);
-            await lectureModel.updateMany(
+    } else {
+      if (course && course.lectures.length > 0) {
+        await lectureModel.updateMany(
           { _id: { $in: course.lectures } },
           { $set: { isPreviewFree: false } }
         );
