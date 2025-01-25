@@ -11,10 +11,10 @@ const SearchPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortByPrice, setSortByPrice] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
   const [searchParams] = useSearchParams();
   const [courses, setCourses] = useState([]);
   const query = searchParams.get("query");
-  let isEmpty = false;
   const handleFilterChange = (categories, price) => {
     setSelectedCategories(categories);
     setSortByPrice(price);
@@ -28,6 +28,12 @@ const SearchPage = () => {
         `/api/course/search?query=${query}&categories=${categories}&sortByPrice=${sortByPrice}`
       );
       setCourses(response.data.courses);
+      console.log(response.data.courses.length);
+      if (response.data.courses.length === 0) {
+        setIsEmpty(true);
+      } else {
+        setIsEmpty(false);
+      }
     } catch (error) {
       console.log(error);
     } finally {

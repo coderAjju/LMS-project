@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Signup from "./pages/Signup";
 import LoginPage from "./pages/Login";
 import Navbar from "./components/Navbar";
@@ -20,9 +20,16 @@ import CourseDetailPage from "./components/student/CourseDetailPage";
 import PrivateRoute from "./pages/ProtectedRoute";
 import CourseProgress from "./components/student/CourseProgress";
 import SearchPage from "./components/student/SearchPage";
+import {
+  AdminRoute,
+  AuthenticatedUser,
+  ProtectedRoute,
+} from "./components/ProtectRoute";
+import { PurchaseCouseProtectedRoute } from "./components/PurchaseCourseProtectedRoute";
 
 const App = () => {
   const { setUser } = useAuthstore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -45,17 +52,71 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/my-learning" element={<MyLearning />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/signup"
+          element={
+            <AuthenticatedUser>
+              <Signup />
+            </AuthenticatedUser>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <AuthenticatedUser>
+              <LoginPage />
+            </AuthenticatedUser>
+          }
+        />
+        <Route
+          path="/my-learning"
+          element={
+            <ProtectedRoute>
+              <MyLearning />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/course-detail/:courseId"
+          element={
+            <ProtectedRoute>
+              <CourseDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-learning/course-detail/:courseId"
+          element={
+            <ProtectedRoute>
+              <CourseDetailPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/course/search" element={<SearchPage />} />
         <Route
           path="/course-detail/:courseId"
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <CourseDetailPage />
-            </PrivateRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/course-progress/:courseId"
+          element={
+            <ProtectedRoute>
+              <PurchaseCouseProtectedRoute>
+                <CourseProgress />
+              </PurchaseCouseProtectedRoute>
+            </ProtectedRoute>
           }
         />
 
@@ -63,12 +124,19 @@ const App = () => {
         <Route
           path="/admin"
           element={
-            <PrivateRoute>
+            <AdminRoute>
               <Sidebar />
-            </PrivateRoute>
+            </AdminRoute>
           }
         >
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            path="dashboard"
+            element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            }
+          />
           <Route path="course" element={<CourseTable />}>
             <Route path="create" element={<AddCourse />} />
           </Route>
@@ -79,7 +147,6 @@ const App = () => {
             element={<EditLecture />}
           />
         </Route>
-        <Route path="/course-progress/:courseId" element={<CourseProgress />} />
       </Routes>
       <Toaster />
     </div>

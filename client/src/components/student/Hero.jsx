@@ -27,18 +27,23 @@ const Hero = () => {
           <Input
             type="text"
             value={searchQuery}
-            className="w-full rounded-2xl bg-white outline-none focus-visible:ring-0 border-none"
+            className="w-full rounded-2xl bg-white dark:text-gray-900 outline-none focus-visible:ring-0 border-none"
             placeholder="Search here ..."
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <Button
             type={"submit"}
-            className="absolute right-0 rounded-r-2xl rounded-l-none"
+            className="absolute right-0 rounded-r-2xl rounded-l-none dark:bg-gray-800 dark:text-white"
           >
             Search
           </Button>
         </form>
-        <Button variant="outline" size="" className="rounded-2xl mt-5">
+        <Button
+          onClick={() => navigate(`/course/search?query`)}
+          variant="outline"
+          size=""
+          className="rounded-2xl mt-5"
+        >
           Explore Courses
         </Button>
       </div>

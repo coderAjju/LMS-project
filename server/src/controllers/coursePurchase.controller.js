@@ -85,20 +85,23 @@ export const stripeWebhook = async (req, res) => {
         payload: payloadString,
         secret,
       });
-
+      console.log("1");
       event = stripe.webhooks.constructEvent(payloadString, header, secret);
     } catch (error) {
       console.log(error);
       return res.status(400).send(`Webhook Error: ${error.message}`);
     }
 
+    console.log("2");
     // handle the checkout session complete event
     if (event.type === "checkout.session.completed") {
+      console.log("3");
       const session = event.data.object;
       const course = await CoursePurchase.findOne({
         paymentId: session.id,
       }).populate({ path: "courseId" });
 
+      console.log("4");
       if (!course) {
         return res.status(404).json({ message: "Course not found" });
       }
@@ -106,24 +109,19 @@ export const stripeWebhook = async (req, res) => {
       if (session.amount_total) {
         course.amount = session.amount_total / 100;
       }
+      console.log("5");
       course.status = "completed";
 
-      //   // Make all lectures visible, by setting 'isPreviewFree' to true
-      //   if (course && course.lectures.length > 0) {
-      //     await lectureModel.updateMany(
-      //       { _id: { $in: course.lectures } },
-      //       { $set: { isPreviewFree: true } }
-      //     );
-      //   }
-
       await course.save();
-
+      console.log("6");
       //Update users enrolled course
       await User.findByIdAndUpdate(
         course.userId,
         { $addToSet: { enrolledCourses: course.courseId._id } },
         { new: true }
       );
+
+      console.log("7");
 
       // Update course with enrolled student
       await Course.findByIdAndUpdate(
@@ -132,6 +130,7 @@ export const stripeWebhook = async (req, res) => {
         { new: true }
       );
     }
+
     res.status(200).json({ received: true });
   } catch (error) {
     console.log(error);

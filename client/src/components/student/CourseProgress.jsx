@@ -63,7 +63,7 @@ const CourseProgress = () => {
         <Button
           className={`${
             completed ? "bg-green-500 hover:bg-green-600" : ""
-          } text-white `}
+          } text-white dark:bg-gray-900 hover:dark:bg-gray-950`}
           onClick={completed ? handleInCompleteCourse : handleCompleteCourse}
         >
           {completed ? (
@@ -71,7 +71,7 @@ const CourseProgress = () => {
               <CheckCircle /> <span>Completed</span>
             </div>
           ) : (
-            "Incompleted yet"
+            <span>Incompleted yet</span>
           )}
         </Button>
       </div>

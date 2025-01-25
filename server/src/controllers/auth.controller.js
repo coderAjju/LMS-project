@@ -72,7 +72,9 @@ export const logout = (_, res, next) => {
 export const getUser = async (req, res, next) => {
   try {
     const id = req.id;
-    const user = await User.findById(id);
+    const user = await User.findById(id)
+      .select("-password")
+      .populate("enrolledCourses");
     return res.status(200).json({ user: user, success: true });
   } catch (error) {
     next(error);
@@ -112,14 +114,12 @@ export const updateProfile = async (req, res, next) => {
           user.profileImage = result.secure_url;
           user.save();
 
-          res
-            .status(200)
-            .json({
-              message: "Profile updated successfully",
-              success: true,
-              user,
-            });
-        } 
+          res.status(200).json({
+            message: "Profile updated successfully",
+            success: true,
+            user,
+          });
+        }
       );
 
       // Convert the buffer to a readable stream and pipe it to the upload stream

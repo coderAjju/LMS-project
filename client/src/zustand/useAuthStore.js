@@ -3,16 +3,16 @@ import axiosInstance from "../lib/axios";
 import { create } from "zustand";
 
 const useAuthstore = create((set, get) => ({
-    user: localStorage.getItem("authUser") !== undefined
-    ? null
-    : JSON.parse(localStorage.getItem("authUser")),
-  setUser: (user) => {
-    // Update Zustand state
-    set({ user });
-
-    // Save user info to localStorage
-    localStorage.setItem("authUser", JSON.stringify(user));
-  },
+  isAuthenticated: false,
+  user:
+    localStorage.getItem("authUser") !== undefined
+      ? null
+      : JSON.parse(localStorage.getItem("authUser")),
+  setUser: (user) =>
+    set((state) => ({
+      user,
+      isAuthenticated: !!user, // If user exists, set isAuthenticated to true
+    })),
   isSignUp: false,
   isLogin: false,
 

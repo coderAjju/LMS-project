@@ -5,11 +5,14 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { appStore } from "./store/store";
 import { Provider } from "react-redux";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={appStore}>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </Provider>
   </BrowserRouter>
 );

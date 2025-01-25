@@ -71,15 +71,8 @@ export const updateLecutreProgress = async (req, res) => {
     let lectureProgressLength = courseProgress.lectureProgress.filter(
       (lectureProg) => lectureProg.viewed
     );
-    // console.log("total viewed lecture ", lectureProgressLength.length);
     const course = await Course.findById(courseId);
-
-    console.log(
-      "total lecture in course ",
-      course.lectures.length,
-      "and total viewed lecture ",
-      lectureProgressLength.length
-    );
+    
     if (course.lectures.length === lectureProgressLength.length) {
       courseProgress.completed = true;
     }

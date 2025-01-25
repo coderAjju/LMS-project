@@ -76,7 +76,9 @@ const Navbar = () => {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Button className="w-full">Dashboard</Button>
+                    <Link to={"/admin/dashboard"} className="w-full">
+                      <Button className="w-full">Dashboard</Button>
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -98,10 +100,10 @@ const Navbar = () => {
       {/* mobile  */}
       <div className="md:hidden flex justify-between items-center h-full w-full px-3">
         <div className="flex items-center gap-3">
-          <School onClick={()=>navigate("/")} size={"30"} />
+          <School onClick={() => navigate("/")} size={"30"} />
           <h1 className="hidden sm:block text-2xl font-bold">Learn Online</h1>
         </div>
-        <SheetDemo />
+        <SheetDemo role={user?.role} />
       </div>
     </div>
   );
@@ -109,8 +111,7 @@ const Navbar = () => {
 
 export default Navbar;
 
-function SheetDemo() {
-  const role = "instructo";
+function SheetDemo({ role }) {
   const navigate = useNavigate();
   return (
     <Sheet>
@@ -145,9 +146,13 @@ function SheetDemo() {
         {role === "instructor" ? (
           <SheetFooter>
             <SheetClose asChild>
-              <Button type="submit">Dashboard</Button>
+              <Link to={"/admin/dashboard"}>
+                <Button type="submit">Dashboard</Button>
+              </Link>
             </SheetClose>
           </SheetFooter>
+        ) : role === "Student" ? (
+          <></>
         ) : (
           <div className="flex items-center gap-3 w-full justify-center">
             <SheetClose asChild>
